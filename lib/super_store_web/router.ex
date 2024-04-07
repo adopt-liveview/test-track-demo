@@ -17,7 +17,8 @@ defmodule SuperStoreWeb.Router do
   scope "/", SuperStoreWeb do
     pipe_through :browser
 
-    live "/", PageLive, :home
+    live "/", ProductLive.Index, :index
+    live "/products/new", ProductLive.New, :new
   end
 
   # Other scopes may use custom stacks.
