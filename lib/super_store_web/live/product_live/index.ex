@@ -18,7 +18,11 @@ defmodule SuperStoreWeb.ProductLive.Index do
       </:actions>
     </.header>
 
-    <.table id="products" rows={@streams.products}>
+    <.table
+      id="products"
+      rows={@streams.products}
+      row_click={fn {_id, product} -> JS.navigate(~p"/products/#{product}") end}
+    >
       <:col :let={{_id, product}} label="Name"><%= product.name %></:col>
       <:col :let={{_id, product}} label="Description"><%= product.description %></:col>
     </.table>
