@@ -17,4 +17,10 @@ defmodule SuperStore.Catalog do
   def delete_product(%Product{} = product) do
     Repo.delete(product)
   end
+
+  def update_product(%Product{} = product, attrs) do
+    product
+    |> Product.changeset(attrs)
+    |> Repo.update()
+  end
 end
