@@ -13,4 +13,8 @@ defmodule SuperStore.Catalog do
     Product.changeset(%Product{}, attrs)
     |> Repo.insert()
   end
+
+  def delete_product(%Product{} = product) do
+    Repo.delete(product)
+  end
 end

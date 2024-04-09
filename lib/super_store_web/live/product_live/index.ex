@@ -7,6 +7,13 @@ defmodule SuperStoreWeb.ProductLive.Index do
     {:ok, socket}
   end
 
+  def handle_event("delete", %{"id" => id}, socket) do
+    product = Catalog.get_product!(id)
+    {:ok, _} = Catalog.delete_product(product)
+
+    {:noreply, stream_delete(socket, :products, product)}
+  end
+
   def render(assigns) do
     ~H"""
     <.header>
@@ -25,6 +32,14 @@ defmodule SuperStoreWeb.ProductLive.Index do
     >
       <:col :let={{_id, product}} label="Name"><%= product.name %></:col>
       <:col :let={{_id, product}} label="Description"><%= product.description %></:col>
+      <:action :let={{id, product}}>
+        <.link
+          phx-click={JS.push("delete", value: %{id: product.id}) |> hide("##{id}")}
+          data-confirm="Are you sure?"
+        >
+          Delete
+        </.link>
+      </:action>
     </.table>
     """
   end
