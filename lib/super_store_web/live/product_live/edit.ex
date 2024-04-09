@@ -2,6 +2,7 @@ defmodule SuperStoreWeb.ProductLive.Edit do
   use SuperStoreWeb, :live_view
   alias SuperStore.Catalog
   alias SuperStore.Catalog.Product
+  alias SuperStoreWeb.ProductLive.FormComponent
 
   def mount(%{"id" => id}, _session, socket) do
     product = Catalog.get_product!(id)
@@ -46,20 +47,9 @@ defmodule SuperStoreWeb.ProductLive.Edit do
       <:subtitle>Use this form to edit product records in your database.</:subtitle>
     </.header>
 
-    <div class="bg-grey-100">
-      <.form
-        for={@form}
-        phx-change="validate_product"
-        phx-submit="save_product"
-        class="flex flex-col max-w-96 mx-auto bg-gray-100 p-24"
-      >
-        <h1>Editing a product</h1>
-        <.input field={@form[:name]} placeholder="Name" />
-        <.input field={@form[:description]} placeholder="Description" />
-
-        <.button type="submit">Send</.button>
-      </.form>
-    </div>
+    <FormComponent.render form={@form} phx-change="validate_product" phx-submit="save_product">
+      <h1>Editing a product</h1>
+    </FormComponent.render>
 
     <.back navigate={~p"/products/#{@product}"}>Back to product</.back>
     """
