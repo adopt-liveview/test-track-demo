@@ -25,32 +25,42 @@ defmodule SuperStoreWeb.ProductLive.FormComponent do
   end
 
   def handle_event("save", %{"product" => product_params}, socket) do
-    case socket.assigns.action do
-      :new ->
-        case Catalog.create_product(product_params) do
-          {:ok, product} ->
-            {:noreply,
-             socket
-             |> put_flash(:info, "Product created successfully")
-             |> push_navigate(to: ~p"/")}
+    save_product(socket, socket.assigns.action, product_params)
+  end
 
-          {:error, %Ecto.Changeset{} = changeset} ->
-            form = to_form(changeset)
-            {:noreply, assign(socket, form: form)}
-        end
+  defp save_product(socket, :edit, product_params) do
+    case Catalog.update_product(socket.assigns.product, product_params) do
+      {:ok, product} ->
+        socket =
+          socket
+          |> put_flash(:info, "Product updated successfully")
 
-      :edit ->
-        case Catalog.update_product(socket.assigns.product, product_params) do
-          {:ok, product} ->
-            {:noreply,
-             socket
-             |> put_flash(:info, "Product updated successfully")
-             |> push_navigate(to: ~p"/products/#{product.id}/edit")}
+        socket =
+          if patch = socket.assigns[:patch] do
+            push_patch(socket, to: patch)
+          else
+            push_navigate(socket, to: ~p"/products/#{product.id}/edit")
+          end
 
-          {:error, %Ecto.Changeset{} = changeset} ->
-            form = to_form(changeset)
-            {:noreply, assign(socket, form: form)}
-        end
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        form = to_form(changeset)
+        {:noreply, assign(socket, form: form)}
+    end
+  end
+
+  defp save_product(socket, :new, product_params) do
+    case Catalog.create_product(product_params) do
+      {:ok, _product} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Product created successfully")
+         |> push_navigate(to: ~p"/")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        form = to_form(changeset)
+        {:noreply, assign(socket, form: form)}
     end
   end
 
